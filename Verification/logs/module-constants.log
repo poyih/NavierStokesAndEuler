@@ -1,0 +1,4 @@
+$ lake env lean Verification/NavierStokesModuleConstants.lean
+NavierStokes modules in environment: 753
+total constants declared by them: 56734
+modules declaring zero constants: #[NavierStokes.PaperAdditionalResults, NavierStokes.PaperResults, NavierStokes]

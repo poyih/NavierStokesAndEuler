@@ -33,7 +33,7 @@ downloaded from the `leanprover/lean4` GitHub release because
 | 3 | Full build | `lake build NavierStokes ComparatorChallenges`: 9583 jobs, 0 errors; the only 4 warnings are the intentional `sorry` placeholders in the two challenge files |
 | 4 | Axiom audit | Both main theorems depend only on `propext`, `Classical.choice`, `Quot.sound` |
 | 5 | Independent restatement | `Verification/NavierStokesIndependentCheck.lean` compiles; restated (C) and (D) proved from the submission with the same three axioms |
-| 6 | `leanchecker` kernel replay of all 817 NavierStokes modules | PENDING |
+| 6 | `leanchecker` kernel replay | All 815 NavierStokes modules replayed individually through the kernel and accepted; the two aggregate names (`NavierStokes`, `NavierStokes.R3`) are prefix invocations that re-replay whole subtrees in one process and ran out of memory, and their own files declare no constants |
 | 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | `Your solution is okay!`: statements match the challenge, axioms permitted, nanoda and the Lean kernel both accept the solution replayed from an empty environment |
 
 ## Details
@@ -136,7 +136,39 @@ The restated definitions were additionally compiled on their own against plain
 
 ### 6. leanchecker kernel replay
 
-PENDING
+`leanchecker`, shipped with the Lean 4.34.0-rc2 toolchain, loads a module's
+imports as trusted and re-runs every declaration of the module itself through
+the kernel from the stored olean, independently of the elaborator that
+produced it. Every module name under `NavierStokes` (the 707 top-level files,
+the 109 files under `R3/`, and the two aggregate files `NavierStokes.lean` and
+`NavierStokes/R3.lean`, 817 names in all) was passed to `leanchecker`
+individually (`lake env leanchecker <module>`), in two worker pools.
+
+Result: 815 names accepted, 0 kernel rejections (`logs/leanchecker-navierstokes.log`).
+
+The two remaining names, `NavierStokes` and `NavierStokes.R3`, did not complete.
+`leanchecker` treats a bare name as a prefix and replays every module under it
+in a single process (verified: `leanchecker --verbose ComparatorChallenges`
+replays both `ComparatorChallenges.NavierStokes` and `ComparatorChallenges.Euler`).
+So those two invocations attempt the whole library and the whole `R3` subtree
+respectively in one process, which exceeded the container's 15 GB and was
+killed by the cgroup out-of-memory killer (exit 137, confirmed in `dmesg`)
+both inside the pools and when run alone. Every module under both prefixes is
+among the 815 accepted individually, and the two aggregate files themselves
+consist only of `import` lines and a doc comment.
+`Verification/NavierStokesModuleConstants.lean` confirms from the compiled
+environment that the root module declares no constants
+(`logs/module-constants.log`):
+
+```
+NavierStokes modules in environment: 753
+total constants declared by them: 56734
+modules declaring zero constants: #[NavierStokes.PaperAdditionalResults, NavierStokes.PaperResults, NavierStokes]
+```
+
+(753 of the 816 built modules are in the import closure of the root; the other
+63 are built because of the library's file glob but are not used by the proof.
+`NavierStokes.R3` is not in that closure either; its source has no declarations.)
 
 ### 7. Comparator
 
