@@ -1,0 +1,15 @@
+=== restart Sat Oct 10 16:16:17 UTC 2026
+=== restart (Mathlib target) Sat Oct 10 18:16:54 UTC 2026
+Build completed successfully (8762 jobs).
+=== NavierStokes target Sat Oct 10 18:47:45 UTC 2026
+warning: ComparatorChallenges/NavierStokes.lean:273:8: declaration uses `sorry`
+warning: ComparatorChallenges/NavierStokes.lean:280:8: declaration uses `sorry`
+warning: ComparatorChallenges/Euler.lean:85:8: declaration uses `sorry`
+warning: ComparatorChallenges/Euler.lean:170:8: declaration uses `sorry`
+info: NavierStokes/ComparatorSolution.lean:31:0: 'NavierStokes.Comparator.navier_stokes_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: NavierStokes/ComparatorSolution.lean:32:0: 'NavierStokes.Comparator.navier_stokes_breakdown_periodic' depends on axioms: [propext, Classical.choice, Quot.sound]
+Build completed successfully (9583 jobs).
+...
+✔ [9581/9583] Built NavierStokes.PaperResults (5.6s)
+✔ [9582/9583] Built NavierStokes (5.5s)
+Build completed successfully (9583 jobs).

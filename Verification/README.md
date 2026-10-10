@@ -34,7 +34,7 @@ downloaded from the `leanprover/lean4` GitHub release because
 | 4 | Axiom audit | Both main theorems depend only on `propext`, `Classical.choice`, `Quot.sound` |
 | 5 | Independent restatement | `Verification/NavierStokesIndependentCheck.lean` compiles; restated (C) and (D) proved from the submission with the same three axioms |
 | 6 | `leanchecker` kernel replay of all 817 NavierStokes modules | PENDING |
-| 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | PENDING |
+| 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | `Your solution is okay!`: statements match the challenge, axioms permitted, nanoda and the Lean kernel both accept the solution replayed from an empty environment |
 
 ## Details
 
@@ -140,7 +140,39 @@ PENDING
 
 ### 7. Comparator
 
-PENDING
+`lake exe comparator ComparatorChallenges/NavierStokes.json` was run with the
+real `landrun` sandbox (Landlock), `lean4export`, and `nanoda_bin`, as the
+`ComparatorChallenges/README.md` prescribes. Comparator
+
+1. builds `ComparatorChallenges.NavierStokes` inside the sandbox and exports the
+   two theorems, the permitted axioms, and the kernel primitives with
+   `lean4export`;
+2. builds `NavierStokes.ComparatorSolution` inside the sandbox and exports the
+   same names;
+3. checks that every constant reachable from the two theorem statements is
+   identical in the challenge export and the solution export, and that the
+   theorems use only `propext`, `Quot.sound`, `Classical.choice`;
+4. replays the whole solution export, from an empty environment, in the
+   nanoda kernel and then in Lean's built-in kernel.
+
+Output (build lines omitted; the full filtered log is in
+`logs/comparator-navierstokes.log`):
+
+```
+Building ComparatorChallenges.NavierStokes
+Build completed successfully (8763 jobs).
+Exporting #[Nat, String, String.mk, Char, Quot, Quot.mk, Quot.lift, Quot.ind, NavierStokes.Comparator.navier_stokes_breakdown_R3, NavierStokes.Comparator.navier_stokes_breakdown_periodic, propext, Quot.sound, Classical.choice, Nat.add, …, List, eagerReduce] from ComparatorChallenges.NavierStokes
+Building NavierStokes.ComparatorSolution
+Build completed successfully (9371 jobs).
+Exporting #[…] from NavierStokes.ComparatorSolution
+Running nanoda kernel on solution
+nanoda kernel accepts the solution
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+```
+
+Wall time for the whole run was about 15 minutes (19:23:58 to 19:39:06 UTC).
 
 ## What this does and does not establish
 
