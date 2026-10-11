@@ -1,0 +1,6 @@
+'Euler.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.exists_compact_smooth_euler_singularity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.IndependentCheck.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.IndependentCheck.exists_compact_smooth_euler_singularity' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

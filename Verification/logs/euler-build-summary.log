@@ -1,0 +1,9 @@
+=== Euler build Sun Oct 11 00:01:59 UTC 2026
+warning: ComparatorChallenges/Euler.lean:85:8: declaration uses `sorry`
+warning: ComparatorChallenges/Euler.lean:170:8: declaration uses `sorry`
+warning: ComparatorChallenges/NavierStokes.lean:273:8: declaration uses `sorry`
+warning: ComparatorChallenges/NavierStokes.lean:280:8: declaration uses `sorry`
+info: Euler/Solution.lean:73:0: 'Euler.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Euler/Solution.lean:75:0: 'Euler.exists_compact_smooth_euler_singularity' depends on axioms: [propext, Classical.choice, Quot.sound]
+Build completed successfully (10606 jobs).
+lake exited with 0
