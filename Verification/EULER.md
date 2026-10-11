@@ -17,7 +17,7 @@ landrun 0.1.18, 4 vCPU, 15 GB RAM).
 | 4 | Axiom audit | Both `Euler.euler_breakdown_R3` and `Euler.exists_compact_smooth_euler_singularity` depend only on `propext`, `Classical.choice`, `Quot.sound` |
 | 5 | Independent restatement | `Verification/EulerIndependentCheck.lean` compiles; both restated theorems proved from the submission with the same three axioms |
 | 6 | `leanchecker` kernel replay | PENDING |
-| 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | PENDING |
+| 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | `Your solution is okay!`: statements match the challenge, axioms permitted, nanoda and the Lean kernel both accept the solution replayed from an empty environment |
 
 ## Details
 
@@ -163,7 +163,32 @@ PENDING
 
 ### 7. Comparator
 
-PENDING
+`lake exe comparator ComparatorChallenges/Euler.json` was run exactly as for
+Navier–Stokes, with the real `landrun` sandbox, `lean4export`, and
+`nanoda_bin`. Output (build lines omitted; the filtered log is in
+`logs/comparator-euler.log`):
+
+```
+Building ComparatorChallenges.Euler
+Build completed successfully (8763 jobs).
+Exporting #[…, Euler.euler_breakdown_R3, Euler.exists_compact_smooth_euler_singularity, propext, Quot.sound, Classical.choice, …] from ComparatorChallenges.Euler
+Building Euler.Solution
+Build completed successfully (10591 jobs).
+Exporting #[…] from Euler.Solution
+Running nanoda kernel on solution
+nanoda kernel accepts the solution
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+```
+
+This is the check that matters most for the second theorem: Comparator
+compares every constant reachable from the two theorem statements between the
+challenge export and the solution export, so the project-specific definitions
+`toL2`, `SobolevSmoothOn`, `EulerSobolevExistenceAndSmoothnessR3On`,
+`vorticity`, `velocityC1Norm`, and `vorticityNorm` are certified identical in
+the two modules, down to the elaborated instance paths. Wall time for the
+whole run was about 24 minutes (01:06:09 to 01:30:31 UTC).
 
 ## What this does and does not establish
 
