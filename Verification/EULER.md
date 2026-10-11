@@ -16,7 +16,7 @@ landrun 0.1.18, 4 vCPU, 15 GB RAM).
 | 3 | Full build | `lake build Euler ComparatorChallenges`: 10606 jobs, 0 errors; the only 4 warnings are the intentional `sorry` placeholders in the two challenge files; the `Euler` library itself compiles with `warningAsError` |
 | 4 | Axiom audit | Both `Euler.euler_breakdown_R3` and `Euler.exists_compact_smooth_euler_singularity` depend only on `propext`, `Classical.choice`, `Quot.sound` |
 | 5 | Independent restatement | `Verification/EulerIndependentCheck.lean` compiles; both restated theorems proved from the submission with the same three axioms |
-| 6 | `leanchecker` kernel replay | PENDING |
+| 6 | `leanchecker` kernel replay | All 1839 `Euler.*` modules replayed individually through the kernel and accepted, 0 rejections |
 | 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | `Your solution is okay!`: statements match the challenge, axioms permitted, nanoda and the Lean kernel both accept the solution replayed from an empty environment |
 
 ## Details
@@ -159,7 +159,19 @@ The restated definitions were additionally compiled on their own against plain
 
 ### 6. leanchecker kernel replay
 
-PENDING
+Every one of the 1839 `Euler.*` module names was passed individually to
+`lake env leanchecker <module>`, in two worker pools (forward and reverse
+order, the second skipping modules already accepted). `leanchecker` loads the
+module's imports as trusted and re-runs the module's own declarations through
+the kernel from the stored olean, independently of the elaborator.
+
+Result: 1839 accepted, 0 kernel rejections (`logs/leanchecker-euler.log`).
+
+The bare name `Euler` was deliberately not invoked: as established in the
+Navier–Stokes check, `leanchecker` treats a bare prefix as "every module under
+it in one process", which exceeds the container's memory. The root file
+`Euler.lean` consists of the single line `import Euler.EulerSingularity` and
+declares nothing, so nothing is left unchecked by that omission.
 
 ### 7. Comparator
 

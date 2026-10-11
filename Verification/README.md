@@ -3,7 +3,8 @@
 This directory records an independent check of the Navier–Stokes part of this
 repository, carried out with Lean 4 in a fresh, isolated cloud container on
 2026-10-10. Only the `NavierStokes` library and its Comparator challenge were
-checked; the `Euler` library was not part of this run.
+checked in this file; the `Euler` library was checked afterwards with the same
+method, see [EULER.md](EULER.md).
 
 ## Environment
 
