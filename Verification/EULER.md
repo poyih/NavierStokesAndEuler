@@ -13,9 +13,9 @@ landrun 0.1.18, 4 vCPU, 15 GB RAM).
 | --- | --- | --- |
 | 1 | Source audit for escape hatches | No `sorry`, `admit`, `axiom`, `unsafe`, `opaque`, `partial`, `implemented_by`, `extern`, `native_decide`, `set_option`, or metaprogramming in any of the 1839 Euler sources |
 | 2 | Challenge statement provenance | First theorem's definitions are the Formal Conjectures Navier–Stokes definitions specialized to `n = 3`, `nu = 0`, `f = 0`; second theorem's definitions are project-specific and were reviewed by hand (below); `Euler/SolutionDefinitions.lean` is identical to the challenge minus the two theorems |
-| 3 | Full build | PENDING |
-| 4 | Axiom audit | PENDING |
-| 5 | Independent restatement | PENDING |
+| 3 | Full build | `lake build Euler ComparatorChallenges`: 10606 jobs, 0 errors; the only 4 warnings are the intentional `sorry` placeholders in the two challenge files; the `Euler` library itself compiles with `warningAsError` |
+| 4 | Axiom audit | Both `Euler.euler_breakdown_R3` and `Euler.exists_compact_smooth_euler_singularity` depend only on `propext`, `Classical.choice`, `Quot.sound` |
+| 5 | Independent restatement | `Verification/EulerIndependentCheck.lean` compiles; both restated theorems proved from the submission with the same three axioms |
 | 6 | `leanchecker` kernel replay | PENDING |
 | 7 | Comparator (landrun + lean4export + nanoda + Lean kernel) | PENDING |
 
@@ -103,15 +103,59 @@ onward except that the two theorems and their doc comments are absent.
 
 ### 3. Build
 
-PENDING
+```
+lake build Euler ComparatorChallenges
+…
+Build completed successfully (10606 jobs).
+```
+
+All 1839 `Euler.*` modules plus the root `Euler` module were compiled (the
+job count includes the already-built Mathlib and NavierStokes dependencies of
+the shared Comparator target). The log (`logs/euler-build-summary.log`) has
+0 errors and 4 warnings, all of them the `sorry` placeholders in the two
+challenge files:
+
+```
+ComparatorChallenges/Euler.lean:85:8: declaration uses `sorry`
+ComparatorChallenges/Euler.lean:170:8: declaration uses `sorry`
+ComparatorChallenges/NavierStokes.lean:273:8: declaration uses `sorry`
+ComparatorChallenges/NavierStokes.lean:280:8: declaration uses `sorry`
+```
+
+Because the `Euler` library is configured with `warningAsError = true`, a
+warning in any of its own modules would have been a build failure.
 
 ### 4. Axiom audit
 
-PENDING
+`Euler/Solution.lean` ends with two `#print axioms` commands; the build log
+records:
+
+```
+'Euler.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.exists_compact_smooth_euler_singularity' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+`sorryAx` does not appear, and no project-specific axiom exists.
 
 ### 5. Independent restatement
 
-PENDING
+`Verification/EulerIndependentCheck.lean` imports only the submission root
+`Euler.Solution`, never the challenge module. It restates every challenge
+definition in a fresh namespace `Euler.IndependentCheck`, proves each
+definition equal to the submission's by `rfl` and each structure equivalent
+field by field, and then derives both theorems as stated with the restated
+definitions from the submission's theorems. Running it:
+
+```
+lake env lean Verification/EulerIndependentCheck.lean
+'Euler.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.exists_compact_smooth_euler_singularity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.IndependentCheck.euler_breakdown_R3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Euler.IndependentCheck.exists_compact_smooth_euler_singularity' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
+The restated definitions were additionally compiled on their own against plain
+`import Mathlib` to confirm they do not depend on anything from the project.
 
 ### 6. leanchecker kernel replay
 
